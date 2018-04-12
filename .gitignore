@@ -31,7 +31,7 @@
 # Debug files
 *.dSYM/
 
-/Debug
-/Release
+Debug
+Release
 
 *.aps
