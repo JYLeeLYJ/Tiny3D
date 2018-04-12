@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="Tiny3D.cpp" />
     <ClCompile Include="main_framework.cpp" />
+    <ClCompile Include="user_display.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tiny3D.h" />

@@ -14,9 +14,9 @@ namespace t3d
 	{
 		//T3DDevice() { };
 
-		//static T3DDevice *_instance;	// single instance
+		static T3DDevice *_instance;	// single instance
 
-		void *			_bmpbit;		// get from CreateDIBSection function
+		void *			_bmpbit;		// assigned in CreateDIBSection function
 		uint **			_framebuf;		// framebuffer pointer
 		HBITMAP			_dib_handle;	// return from CreateDIBSection function 
 		HBITMAP			_obj_handle;	// return from SelectObject function
@@ -30,13 +30,13 @@ namespace t3d
 	public:
 
 		//single instance (single_thread.ver)
-		//static T3DDevice* GetDevice() { return (_instance ? _instance : _instance=new T3DDevice); }
+		static T3DDevice* GetDevice() { return (_instance ? _instance : _instance=new T3DDevice); }
 
 		void Init(HWND,int,int );
 		HDC & get_cdc() { return _cdc; }
 
 		//test function
-		void reset_buffer();
+		void BufferReset();
 
 	};
 

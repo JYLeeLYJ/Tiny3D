@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tiny3D", "Tiny3D.vcxproj", "{74B97FA1-CF06-4B04-A4D6-0E47C6DADD69}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "..\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.vcxproj", "{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,18 +27,6 @@ Global
 		{74B97FA1-CF06-4B04-A4D6-0E47C6DADD69}.Release|x64.Build.0 = Release|x64
 		{74B97FA1-CF06-4B04-A4D6-0E47C6DADD69}.Release|x86.ActiveCfg = Release|Win32
 		{74B97FA1-CF06-4B04-A4D6-0E47C6DADD69}.Release|x86.Build.0 = Release|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Debug|Win32.Build.0 = Debug|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Debug|x64.ActiveCfg = Debug|x64
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Debug|x64.Build.0 = Debug|x64
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Debug|x86.ActiveCfg = Debug|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Debug|x86.Build.0 = Debug|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Release|Win32.ActiveCfg = Release|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Release|Win32.Build.0 = Release|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Release|x64.ActiveCfg = Release|x64
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Release|x64.Build.0 = Release|x64
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Release|x86.ActiveCfg = Release|Win32
-		{AF58C391-2DF8-4FE7-8B3D-2A7676878A32}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

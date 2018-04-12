@@ -5,7 +5,7 @@
 
 using namespace t3d;
 
-//T3DDevice * _instance = nullptr;
+T3DDevice * T3DDevice::_instance = nullptr;
 
 void T3DDevice::Init(HWND hwnd, int w, int h)
 {
@@ -20,8 +20,6 @@ void T3DDevice::Init(HWND hwnd, int w, int h)
 	_dib_handle = CreateDIBSection(_cdc,&_bmp_info, DIB_RGB_COLORS, &_bmpbit,NULL,NULL);
 	_obj_handle = (HBITMAP)SelectObject(_cdc, _dib_handle);
 
-	//char *buf = (char *)ptr;
-	//_framebuf = static_cast<uint *>(ptr);
 	_framebuf = new uint*[h];	
 	for (int i = 0; i < h; ++i) {
 		_framebuf[i] = (uint *)((char *)_bmpbit + i * w * 4);
@@ -35,16 +33,12 @@ void T3DDevice::Init(HWND hwnd, int w, int h)
 }
 
 
-void T3DDevice::reset_buffer()
+void T3DDevice::BufferReset()
 {
 	memset(_bmpbit, 0, _width*_height * 4);
 
 	/*test funtion */
-	int begw = _width / 4;
-	int begh = _height / 4;
-	for (int i = begh; i < 3 * begh; i++)
-		for (int j = begw; j < 3 * begw; j++)
-			_framebuf[i][j]= 0xff002bff;
-			//*(_framebuf[i]+j) = 0xff002bff;
-			//*(_framebuf+_width*i+j ) = 0xff002bff;	//note that the color format in GDI is BGR ,not RGB
+	for (int i = 200; i < 400; i++)
+		for (int j = 300; j < 500; j++)
+			_framebuf[i][j]= 0xff002bff;	//note that the color data format in GDI is BGR ,not RGB
 }
