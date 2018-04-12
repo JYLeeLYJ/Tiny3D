@@ -1,6 +1,6 @@
 #pragma once
 
-namespace
+namespace TMat
 {
 
 	class Vector3 {
