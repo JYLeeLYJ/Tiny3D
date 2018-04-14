@@ -24,6 +24,9 @@
     <ClCompile Include="user_display.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="tinymat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tinymat.h">
