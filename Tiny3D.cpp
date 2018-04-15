@@ -35,8 +35,10 @@ void T3DDevice::Init(HWND hwnd, int w, int h)
 	_state = 1;
 
 	//TODO:other members init : z buffer;
+	_zbuffer = NULL;
 
 }
+
 
 void T3DDevice::BufferReset()
 {
@@ -44,10 +46,6 @@ void T3DDevice::BufferReset()
 
 	//TODO: BufferReset() : z buffer clear 
 
-	/*test funtion */
-	//for (int i = 200; i < 400; i++)
-	//	for (int j = 300; j < 500; j++)
-	//		_framebuf[i][j]= 0xff002bff;	//note that the color data format in GDI is BGR ,not RGB
 }
 
 void T3DDevice::SetTransform(T3DMatrix &mat, Transform t) {
@@ -143,14 +141,22 @@ void T3DDevice::draw_triangle(Vertex v1, Vertex v2, Vertex v3) {
 		simple_cvv_test(v3._pos))
 		return;
 
-	//TODO:表面剔除
-	//T3DVector normal=cross()
+	//将坐标归一化
+	homogenize(v1._pos);
+	homogenize(v2._pos);
+	homogenize(v3._pos);
 
-	//将坐标归一化并进行屏幕映射
+	//TODO:背面剔除
+	if (_state & BACKFACE_CULLING) {
+		T3DVector normal = T3DVector::cross(v2._pos - v1._pos, v3._pos - v2._pos);
+		if (normal._z > 0.0f)return;
+	}
+
+	//进行屏幕映射
 	//依然保留有深度信息在_z 中 [0,1]
-	screen_map(homogenize(v1._pos));
-	screen_map(homogenize(v2._pos));
-	screen_map(homogenize(v3._pos));
+	screen_map(v1._pos);
+	screen_map(v2._pos);
+	screen_map(v3._pos);
 
 	//三角形光栅化
 	rasterize(v1, v2, v3);
@@ -162,9 +168,9 @@ bool T3DDevice::simple_cvv_test(Point &p) {
 	float w = p._w;
 
 	//顶点在视体外
-	if (p._z < 0.0f | p._z > w |
-		p._x < -w | p._x >  w |
-		p._y < -w | p._y > w)
+	if (p._z < 0.0f || p._z > w||
+		p._x < -w || p._x >  w ||
+		p._y < -w || p._y > w)
 		return true;
 
 	return false;
@@ -187,14 +193,15 @@ void T3DDevice::screen_map(Point &p) {
 inline void T3DDevice::rasterize(Vertex& v1, Vertex& v2, Vertex& v3)
 {
 	//线框模式
-	if (_state = WIREFRAME)
+	if (_state & WIREFRAME)
 	{
-		//bresenham(v1, v2, 0);
-		//bresenham(v1, v3, 0);
-		//bresenham(v2, v3, 0);
-		draw_line_test(v1._pos._x, v1._pos._y, v2._pos._x, v2._pos._y, 0);
-		draw_line_test(v1._pos._x, v1._pos._y, v3._pos._x, v3._pos._y, 0);
-		draw_line_test(v2._pos._x, v2._pos._y, v3._pos._x, v3._pos._y, 0);
+		
+		bresenham(v1, v2, 0);
+		bresenham(v1, v3, 0);
+		bresenham(v2, v3, 0);
+		//draw_line_test(v1._pos._x, v1._pos._y, v2._pos._x, v2._pos._y, 0);
+		//draw_line_test(v1._pos._x, v1._pos._y, v3._pos._x, v3._pos._y, 0);
+		//draw_line_test(v2._pos._x, v2._pos._y, v3._pos._x, v3._pos._y, 0);
 	}
 
 	//TODO: 纹理映射，平面
@@ -204,87 +211,44 @@ inline void T3DDevice::rasterize(Vertex& v1, Vertex& v2, Vertex& v3)
 //需要注意斜率不存在的情况——垂直直线
 void T3DDevice::bresenham(Vertex &v0, Vertex &v1, uint color) {
 
-	int x0, y0, x1, y1;
-	if (v0._pos._x < v1._pos._x) {
-		x1 = (int)v1._pos._x; y1 = (int)v1._pos._y;
-		x0 = (int)v0._pos._x; y0 = (int)v0._pos._y;
+	int x0 = v0._pos._x, y0 = v0._pos._y, x1 = v1._pos._x, y1 = v1._pos._y;
+
+	int dx = x1 - x0 > 0 ? x1 - x0 : x0 - x1;
+	int dy = y1 - y0 > 0 ? y1 - y0 : y0 - y1;
+
+	int x=x0, y=y0, e=0;
+	int inc_x = x0 > x1 ? -1 : 1;
+	int	inc_y = y0 > y1 ? -1 : 1;
+
+	if (dx == 0)for (; y != y1; y += inc_y)draw_pixel(x, y, color);
+	else if (dy == 0)for (; x != x1; x += inc_x)draw_pixel(x, y, color);
+	else if(dx>dy){
+		e = -dx;
+		dy *= 2;
+		dx *= 2;
+		for (; x != x1; x += inc_x) {
+			draw_pixel(x, y, color);
+			e += dy ;
+			if (e >= 0)
+			{
+				y += inc_y;
+				e -= dx ;
+			}
+		}
 	}
 	else {
-		x0 = (int)v1._pos._x; y0 = (int)v1._pos._y;
-		x1 = (int)v0._pos._x; y1 = (int)v0._pos._y;
-	}
-
-
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	
-	int x = x0, y = y0;
-	int e = -dx;
-
-	for (int i = 0; i <= dx; ++i) {
-		draw_pixel(x, y, color);
-		++x;
-		e += 2 * dy;
-		if (e >= 0) {
-			++y;
-			e -= 2 * dx;
-		}
-	}
-
-	//
-	if (dx == 0) {
-		for (y = y0; y <= y1; ++y)draw_pixel(x, y, color);
-	}
-}
-
-
-//	skywind mini3d.c - draw_line ()function
-//	github.com/skywind3000/mini3d
-void T3DDevice::draw_line_test(int x1, int y1, int x2, int y2, uint c) {
-
-	int x, y, rem = 0;
-	if (x1 == x2 && y1 == y2) {
-		draw_pixel( x1, y1, c);
-	}
-	else if (x1 == x2) {
-		int inc = (y1 <= y2) ? 1 : -1;
-		for (y = y1; y != y2; y += inc) draw_pixel(x1, y, c);
-		draw_pixel( x2, y2, c);
-	}
-	else if (y1 == y2) {
-		int inc = (x1 <= x2) ? 1 : -1;
-		for (x = x1; x != x2; x += inc) draw_pixel( x, y1, c);
-		draw_pixel(x2, y2, c);
-	}
-	else {
-		int dx = (x1 < x2) ? x2 - x1 : x1 - x2;
-		int dy = (y1 < y2) ? y2 - y1 : y1 - y2;
-		if (dx >= dy) {
-			if (x2 < x1) x = x1, y = y1, x1 = x2, y1 = y2, x2 = x, y2 = y;
-			for (x = x1, y = y1; x <= x2; x++) {
-				draw_pixel(x, y, c);
-				rem += dy;
-				if (rem >= dx) {
-					rem -= dx;
-					y += (y2 >= y1) ? 1 : -1;
-					draw_pixel(x, y, c);
-				}
+		e = -dy;
+		dy *= 2;
+		dx *= 2;
+		for (; y != y1; y += inc_y) {
+			draw_pixel(x, y, color);
+			e += dx;
+			if (e >= 0) {
+				x += inc_x;
+				e -= dy;
 			}
-			draw_pixel( x2, y2, c);
-		}
-		else {
-			if (y2 < y1) x = x1, y = y1, x1 = x2, y1 = y2, x2 = x, y2 = y;
-			for (x = x1, y = y1; y <= y2; y++) {
-				draw_pixel( x, y, c);
-				rem += dx;
-				if (rem >= dy) {
-					rem -= dy;
-					x += (x2 >= x1) ? 1 : -1;
-					draw_pixel(x, y, c);
-				}
-			}
-			draw_pixel( x2, y2, c);
 		}
 	}
+
 }
 

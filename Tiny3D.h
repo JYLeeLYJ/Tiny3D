@@ -69,7 +69,7 @@ namespace t3d
 
 		void *			_bmpbit;		// assigned in CreateDIBSection function
 		uint **			_framebuf;		// framebuffer pointer
-		float			_zbuffer;		
+		float*			_zbuffer;		
 		HBITMAP			_dib_handle;	// return from CreateDIBSection function 
 		HBITMAP			_obj_handle;	// return from SelectObject function
 		HDC				_cdc;			// compatible dc
@@ -98,10 +98,10 @@ namespace t3d
 		//Rasterization stages
 		inline void rasterize(Vertex &v1, Vertex &v2,Vertex &v3);
 		void bresenham(Vertex &v0, Vertex &v1, uint color);
-		void draw_line_test(int x0, int y0, int x1, int y1, uint color);
 		void draw_pixel(int x, int y, uint color) { _framebuf[y][x] = color; };
 
 	public:
+
 
 		void Init(HWND hwnd, int w, int h);
 		static T3DDevice* GetDevice() { return (_instance ? _instance : _instance=new T3DDevice); }
@@ -117,8 +117,8 @@ namespace t3d
 
 		void SetLookAtLH(T3DVector eye, T3DVector up, T3DVector target);
 		void SetPerspectiveFovLH(float fovy,float aspect,float z_near,float z_far);
-		void SetIndices(T3DVertexIndex ib) { _ib= ib; };
-		void SetStreamSourse(T3DVertexBuffer vb) { _vb = vb; }
+		void SetIndices(T3DVertexIndex ib) { if (!_ib)delete[]_ib; _ib = ib; };
+		void SetStreamSourse(T3DVertexBuffer vb) { if (!_vb)delete[]_vb; _vb = vb; }
 		void SetTransform(T3DMatrix &mat, Transform t);
 		void SetRenderState(uint state) { _state = state; }
 

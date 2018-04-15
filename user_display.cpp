@@ -61,7 +61,7 @@ void Setup()
 	device->SetLookAtLH(eye, up, target);
 	device->SetPerspectiveFovLH(PI*0.5f, float(w) / h, 1.0f, 1000.f);
 
-	device->SetRenderState(WIREFRAME | BACKFACE_CULLING);	//线框模式 / 背面剔除
+	device->SetRenderState(WIREFRAME | BACKFACE_CULLING);	//线框模式 | 背面剔除
 
 	device->SetIndices(IB);
 	device->SetStreamSourse(VB);
@@ -74,7 +74,6 @@ void Display() {
 
 	auto device = T3DDevice::GetDevice();
 	
-
 	T3DMatrix m;
 
 	//设置旋转轴,利用四元数
@@ -91,6 +90,7 @@ void Display() {
 
 	//draw cube 
 	device->DrawIndexPrimitive(TRIANGLE,8,12);
+	//device->bresenham(Vertex(300, 300, 0), Vertex(400, 200, 0),0);
 
 }
 
