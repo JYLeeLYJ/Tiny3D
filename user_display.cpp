@@ -4,8 +4,6 @@ using namespace t3d;
 
 #define PI 3.1415926f
 
-static float theta = 0.0f;
-
 void Setup()
 {
 	auto device = T3DDevice::GetDevice();
@@ -14,8 +12,6 @@ void Setup()
 	auto IB = device->CreateIndexBuffer(36);
 
 	// vertices of a cube
-
-
 	VB[0] = Vertex(-1.0f, -1.0f, -1.0f);
 	VB[1] = Vertex(-1.0f,  1.0f, -1.0f);
 	VB[2] = Vertex( 1.0f,  1.0f, -1.0f);
@@ -42,13 +38,6 @@ void Setup()
 	for (int i = 0; i < 36; ++i) {
 		IB[i] = Indices[i];
 	}
-
-	/*
-	VB[0] = Vertex(0.0f, 0.0f, 0.0f);
-	VB[1] = Vertex(1.0f, 0.0f, 0.0f);
-	VB[2] = Vertex(0.0f, 1.0f, 1.0f);
-	
-	uint Indices[] = { 0,1,2 };*/
 	
 	T3DVector eye(0.0f, 0.0f, -3.0f);
 	T3DVector target(0.0f, 0.0f, 0.0f);
@@ -76,8 +65,12 @@ void Display() {
 	
 	T3DMatrix m;
 
+	static float theta = 0.0f;
 	//设置旋转轴,利用四元数
 	m.SetRotationQ(-1.0f, -0.5f, 1.0f, theta);
+
+	theta += 0.01f;
+	if (theta > 6.28)theta = 0;
 
 	//级联旋转
 	//T3DMatrix mx, my;
@@ -88,15 +81,18 @@ void Display() {
 	device->SetTransform(m, WORLD);
 	device->BufferReset();
 
+
 	//draw cube 
 	device->DrawIndexPrimitive(TRIANGLE,8,12);
-	//device->bresenham(Vertex(300, 300, 0), Vertex(400, 200, 0),0);
+	//device->DrawIndexPrimitive(LINE, 8, 18);
 
 }
 
 void OnKeyUp(UINT message, WPARAM wParam, LPARAM lParam) {
 
-	theta += 0.05f;
-	if (theta > 6.28)theta = 0;
+
+	/*	theta += 0.05f;
+	if (theta > 6.28)theta = 0;*/
+
 
 }

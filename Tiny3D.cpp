@@ -7,6 +7,16 @@ using namespace t3d;
 
 T3DDevice * T3DDevice::_instance = nullptr;
 
+/**************************************************
+ *	initialize funcitons :
+ *	1.	Init
+ *	2.	BufferReset()
+ *	3.	SetTransform()
+ *	4.	SetLookAtLH()
+ *	5.	SetPerspectiveFovLH
+ *	6.	...
+ ***************************************************/
+
 void T3DDevice::Init(HWND hwnd, int w, int h)
 {
 	assert(hwnd);
@@ -38,7 +48,6 @@ void T3DDevice::Init(HWND hwnd, int w, int h)
 	_zbuffer = NULL;
 
 }
-
 
 void T3DDevice::BufferReset()
 {
@@ -110,25 +119,33 @@ void T3DDevice::SetPerspectiveFovLH(float fov, float aspect, float zn, float zf)
 
 void T3DDevice::DrawIndexPrimitive(Primitive p,uint num_vertices,uint cnt_primitive) {
 
-	uint n_indices = 3 * cnt_primitive;
+	_transform = _proj * _view * _world;
+
+	uint n_indices; //3 * cnt_primitive;
 
 	// 图元装配·伪
-	if (p == TRIANGLE)
+	if (p == TRIANGLE) {
+		n_indices = 3 * cnt_primitive;
 		for (uint i = 0; i < n_indices; i += 3)
-		{
-			auto &v1 = _vb[_ib[i]];
-			auto &v2 = _vb[_ib[i + 1]];
-			auto &v3 = _vb[_ib[i + 2]];
-			draw_triangle(v1, v2, v3);
-			//draw_triangle(_vb[_ib[i]], _vb[_ib[i + 1]], _vb[_ib[i + 2]]);
-		}
-	//TODO: other primitive drawing implementation
+			draw_triangle(_vb[_ib[i]], _vb[_ib[i + 1]], _vb[_ib[i + 2]]);
+
+	}
+	else if (p == LINE) {
+		/*n_indices = 2 * cnt_primitive;
+		for (uint i = 0; i < n_indices; i += 2) {
+			bresenham(_vb[_ib[i]], _vb[_ib[i + 1]],0);
+		}*/
+		
+	}
+	//TODO: 其他图元绘制，点（粗点），线
 }
+
+/**********************************************
+ *	Vertex Shading Stage :Transform
+ **********************************************/
 
 void T3DDevice::draw_triangle(Vertex v1, Vertex v2, Vertex v3) {
 
-	_transform = _proj * _view * _world;
-	
 	//from world to cvv 
 	v1._pos = _transform * v1._pos;
 	v2._pos = _transform * v2._pos;
@@ -142,11 +159,10 @@ void T3DDevice::draw_triangle(Vertex v1, Vertex v2, Vertex v3) {
 		return;
 
 	//将坐标归一化
-	homogenize(v1._pos);
-	homogenize(v2._pos);
-	homogenize(v3._pos);
+	perspective_divide(v1._pos);
+	perspective_divide(v2._pos);
+	perspective_divide(v3._pos);
 
-	//TODO:背面剔除
 	if (_state & BACKFACE_CULLING) {
 		T3DVector normal = T3DVector::cross(v2._pos - v1._pos, v3._pos - v2._pos);
 		if (normal._z > 0.0f)return;
@@ -177,7 +193,7 @@ bool T3DDevice::simple_cvv_test(Point &p) {
 
 }
 
-Point & T3DDevice::homogenize(Point &p) {
+Point & T3DDevice::perspective_divide(Point &p) {
 	p._x /= p._w;
 	p._y /= p._w;
 	p._z /= p._w;
@@ -190,18 +206,18 @@ void T3DDevice::screen_map(Point &p) {
 	p._y = (1.0f - p._y)*_height / 2;
 }
 
+/***********************************************
+ *	Pixel Shading Stage
+ ************************************************/
+
 inline void T3DDevice::rasterize(Vertex& v1, Vertex& v2, Vertex& v3)
 {
 	//线框模式
 	if (_state & WIREFRAME)
-	{
-		
+	{	
 		bresenham(v1, v2, 0);
 		bresenham(v1, v3, 0);
 		bresenham(v2, v3, 0);
-		//draw_line_test(v1._pos._x, v1._pos._y, v2._pos._x, v2._pos._y, 0);
-		//draw_line_test(v1._pos._x, v1._pos._y, v3._pos._x, v3._pos._y, 0);
-		//draw_line_test(v2._pos._x, v2._pos._y, v3._pos._x, v3._pos._y, 0);
 	}
 
 	//TODO: 纹理映射，平面

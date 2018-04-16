@@ -90,12 +90,14 @@ namespace t3d
 		//you can get hinstance using GetModuleHandle() API 
 
 		//Geometry stage 
+		//TODO:vertex shader function
 		void draw_triangle(Vertex p1, Vertex p2, Vertex p3);
 		bool simple_cvv_test(Point &p);
-		inline Point& homogenize(Point &p);
+		inline Point& perspective_divide(Point &p);
 		inline void screen_map(Point &p);
 
 		//Rasterization stages
+		//TODO:pixel shader function
 		inline void rasterize(Vertex &v1, Vertex &v2,Vertex &v3);
 		void bresenham(Vertex &v0, Vertex &v1, uint color);
 		void draw_pixel(int x, int y, uint color) { _framebuf[y][x] = color; };
@@ -114,6 +116,10 @@ namespace t3d
 
 		T3DVertexBuffer  CreateVertexBuffer(uint n) { return new Vertex[n]; }
 		T3DVertexIndex  CreateIndexBuffer(uint n) { return new uint[n]; }
+
+		//TODO: Enable funcitons
+		void ZBufferEnable();
+		void AlphaEnable();
 
 		void SetLookAtLH(T3DVector eye, T3DVector up, T3DVector target);
 		void SetPerspectiveFovLH(float fovy,float aspect,float z_near,float z_far);
