@@ -64,6 +64,8 @@ namespace t3d
 
 		//private declaration for singleton   
 		T3DDevice() { };
+		T3DDevice(const T3DDevice & ) {};
+		T3DDevice& operator =(const T3DDevice &) {};
 
 		static T3DDevice *_instance;	// single instance
 
@@ -106,7 +108,7 @@ namespace t3d
 
 
 		void Init(HWND hwnd, int w, int h);
-		static T3DDevice* GetDevice() { return (_instance ? _instance : _instance=new T3DDevice); }
+		static T3DDevice* GetDevice() { return (_instance ? _instance : _instance=new T3DDevice); }	//µ¥Ïß³Ì
 
 		HDC & GetCDC() { return _cdc; }
 		uint GetWidth() { return _width; }
