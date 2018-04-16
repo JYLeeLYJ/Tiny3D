@@ -29,3 +29,11 @@
 
 ## Example
 
+线框绘制：
+
+![](https://github.com/JYLeeLYJ/Tiny3D/blob/master/img/wireframe.png?raw=true)
+
+背面剔除：
+
+![](https://github.com/JYLeeLYJ/Tiny3D/blob/master/img/back_surface_culling.png?raw=true)
+
