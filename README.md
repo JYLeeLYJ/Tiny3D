@@ -26,6 +26,12 @@
 - CVV中三角形的部分裁剪、分割
 - ...
 
+## Files:
+
+- main_framework.cpp : win32 initialization
+- Tiny3D.h/.cpp : render API functions
+- Tinymat.h/.cpp : simple matrix operated lib
+- user_display.cpp : user-defined , display a cube
 
 ## Example
 
